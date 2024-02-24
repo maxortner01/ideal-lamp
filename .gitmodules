@@ -1,0 +1,6 @@
+[submodule "extern/SDL"]
+	path = extern/SDL
+	url = https://github.com/libsdl-org/SDL
+[submodule "extern/vk-bootstrap"]
+	path = extern/vk-bootstrap
+	url = https://github.com/charles-lunarg/vk-bootstrap
