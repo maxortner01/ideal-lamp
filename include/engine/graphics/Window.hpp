@@ -12,14 +12,13 @@ namespace engine::graphics
     {
         using handle_t = void*;
 
-        Image(id_t id, id_t d, handle_t i, handle_t i_v);
+        Image(id_t id, handle_t i, handle_t i_v);
         ~Image();
 
     private:
         friend class Instance;
 
         handle_t image, image_view;
-        id_t device;
     };
 
     struct Swapchain : util::Factory<Swapchain>

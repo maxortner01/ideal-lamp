@@ -10,26 +10,25 @@
 
 namespace engine::graphics
 {
-    Image::Image(id_t id, id_t d, handle_t i, handle_t i_v) :
+    Image::Image(id_t id, handle_t i, handle_t i_v) :
         Factory(id),
-        device(d),
         image(i),
         image_view(i_v)
     {   }
 
     Image::~Image()
     {   
-        auto d = Device::get(device);
+        auto device = Instance::get().getDevice();
         if (image)
             vkDestroyImage(
-                static_cast<VkDevice>(d->getHandle()), 
+                static_cast<VkDevice>(device), 
                 static_cast<VkImage>(image), 
                 nullptr
             );
 
         if (image_view)
             vkDestroyImageView(
-                static_cast<VkDevice>(d->getHandle()), 
+                static_cast<VkDevice>(device), 
                 static_cast<VkImageView>(image_view), 
                 nullptr
             );
@@ -44,6 +43,11 @@ namespace engine::graphics
     Swapchain::~Swapchain()
     {
         // Destroy swapchain
+        vkDestroySwapchainKHR(
+            static_cast<VkDevice>(Instance::get().getDevice()), 
+            static_cast<VkSwapchainKHR>(handle), 
+            nullptr
+        );
 
         for (const auto& id : images)
             Image::destroy(id);

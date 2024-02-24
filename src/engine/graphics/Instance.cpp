@@ -55,6 +55,7 @@ namespace engine::graphics
         vkb::InstanceBuilder builder;
         auto res = builder.request_validation_layers()
                         .use_default_debug_messenger()
+                        .set_minimum_instance_version(1, 3)
                         .build ();
         if (!res) { _error = Error::VULKAN_INSTANCE_ERROR; return; } 
 
@@ -120,8 +121,7 @@ namespace engine::graphics
         for (uint32_t i = 0; i < images->size(); i++)
             swapchain->images.push_back(
                 Image::make(
-                    device,
-                    static_cast<handle_t>(images->at(i)), 
+                    nullptr, 
                     static_cast<handle_t>(image_views->at(i))
                 )->getID()
             );

@@ -58,6 +58,8 @@ namespace engine::graphics
         constexpr bool  good()         const { return !_error.has_value(); }
         constexpr const Error& error() const { return _error.value(); }
 
+        Device::handle_t getDevice() const { return Device::get(device)->getHandle(); }
+
         void initialize(std::function<handle_t()> surface_func);
         bool initialized() const { return (handle != nullptr); }
 
