@@ -55,7 +55,7 @@ namespace engine::graphics
         vkb::InstanceBuilder builder;
         auto res = builder.request_validation_layers()
                         .use_default_debug_messenger()
-                        .set_minimum_instance_version(1, 3)
+                        .set_minimum_instance_version(1, 2)
                         .build ();
         if (!res) { _error = Error::VULKAN_INSTANCE_ERROR; return; } 
 
@@ -76,9 +76,10 @@ namespace engine::graphics
         vkb::PhysicalDeviceSelector selector { *res };
         auto phys_res = selector
             .set_surface(static_cast<VkSurfaceKHR>(surface))
-            .set_minimum_version(1, 3)
+            .set_minimum_version(1, 2)
             .set_required_features_12(features12)
-            .set_required_features_13(features)
+            .add_required_extension(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME)
+            .add_required_extension(VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME)
             .select();
         if (!phys_res) { _error = Error::VULKAN_PHYSICAL_NOT_FOUND; return; }
         physical_device = static_cast<handle_t>(phys_res->physical_device);
@@ -86,7 +87,10 @@ namespace engine::graphics
         vkb::DeviceBuilder device_b { *phys_res };
         auto dev_res = device_b.build();
 
-        device = Device::make(static_cast<handle_t>(dev_res->device))->getID();
+        auto vk_device = Device::make(static_cast<handle_t>(dev_res->device));
+        device = vk_device->getID();
+        vk_device->graphics.queue = *dev_res->get_queue(vkb::QueueType::graphics);
+        vk_device->graphics.index = *dev_res->get_queue_index(vkb::QueueType::graphics);
     }
 
     void Instance::buildSwapchain(Swapchain* swapchain, uint32_t w, uint32_t h) const

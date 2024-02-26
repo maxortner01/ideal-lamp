@@ -14,6 +14,13 @@ namespace engine::graphics
     {
         using handle_t = void*;
 
+    private:
+        struct Queue
+        {
+            handle_t queue;
+            uint32_t index;
+        };
+    public:
         Device(id_t id, handle_t h);
         ~Device();
 
@@ -21,9 +28,13 @@ namespace engine::graphics
         Device(const Device&) = delete;
         
         const handle_t& getHandle() const { return handle; }
+        const Queue& getGraphicsQueue() const { return graphics; }
 
     private:
+        friend struct Instance;
+
         handle_t handle;
+        Queue graphics;
     };
 
     struct Instance
@@ -58,7 +69,7 @@ namespace engine::graphics
         constexpr bool  good()         const { return !_error.has_value(); }
         constexpr const Error& error() const { return _error.value(); }
 
-        Device::handle_t getDevice() const { return Device::get(device)->getHandle(); }
+        std::shared_ptr<Device> getDevice() const { return Device::get(device); }
 
         void initialize(std::function<handle_t()> surface_func);
         bool initialized() const { return (handle != nullptr); }
